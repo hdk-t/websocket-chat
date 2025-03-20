@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WebSocket Chat</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+    <style>
+        .bg-lightgray {
+            background: lightgray;
+        }
+
+        .bg-lightgreen {
+            background: #8de055;
+        }
+
+        .fit-content {
+            width: fit-content;
+        }
+
+        .fs-80 {
+            font-size: 80%;
+        }
+        
+        .text-decoration-none {
+            text-decoration: none;
+        }
+
+        .fixed-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .mw-470 {
+            max-width: 470px;
+        }
+        
+        .mw-450 {
+            max-width: 450px;
+        }
+
+        .mw-390 {
+            max-width: 390px;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <div class="container-fluid">
+        <div class="h-100 row justify-content-center">
+            <div class="mw-470">
+                <!-- ヘッダー -->
+                <div class="py-2 row d-flex align-items-center justify-content-start bg-primary">
+                    <a href="/" class="ml-1 my-1 h5 text-light text-decoration-none">WebSocket Chat</a>
+                </div>
+
+                <!-- 参加画面 -->
+                <div id="joinView" class="">
+                    <div class="my-3">
+                        <div class="text-secondary fs-80">
+                            ニックネームを入力しない場合は「unknown」として参加します
+                        </div>
+                        <div>
+                            <input id="nickname" class="form-control" type="text" placeholder="ニックネーム" onkeydown="if(event.key === 'Enter') joinChat()" />
+                        </div>
+                        <div class="text-end">
+                            <button class="my-2 btn btn-primary" type="button" onclick="joinChat()">
+                                参加
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- チャット画面 -->
+                <div id="chatView" class="d-none">
+                    <div id="chatSpace" class="my-1 overflow-auto" style="min-height:80vh;">
+                        <!-- ここにチャットメッセージが入る -->
+                    </div>
+                    <!-- <div class="input-group m-1 fixed-bottom mw-470"> -->
+                    <div class="input-group m-1">
+                        <input id="message" type="text" class="form-control" placeholder="メッセージを入力" aria-describedby="sendButton" onkeydown="if(event.key === 'Enter') sendMessage()" />
+                        <button class="btn btn-primary" type="button" id="sendButton" onclick="sendMessage()">
+                            送信
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    let ws = null;
+    let nickname = "";
+
+    // チャットに参加
+    function joinChat() {
+        // WebSocket接続
+        ws = new WebSocket("ws://10.248.60.36:3000");
+
+        // メッセージ受信処理を設定
+        ws.onmessage = (event) => {
+            const json = JSON.parse(event.data);
+            const chatSpace = document.getElementById("chatSpace");
+            chatSpace.appendChild(createChatMessage(json));
+            chatSpace.scrollTo(0, chatSpace.scrollHeight);
+        };
+
+        // ニックネーム
+        nickname = document.getElementById("nickname").value;
+        if (nickname === "" || nickname == null) {
+            nickname = "unknow";
+        }
+
+        // 参加画面を非表示
+        document.getElementById("joinView").classList.add("d-none");
+
+        // チャット画面を表示
+        document.getElementById("chatView").classList.remove("d-none");
+    }
+
+    // メッセージ送信
+    function sendMessage() {
+        const message = document.getElementById("message").value;
+        if (message === "" || message == null) {
+            return false;
+        }
+        const now = new Date();
+        const json = {
+            nickname: nickname,
+            message: message,
+            datetime: `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`,
+        };
+        // 送信
+        ws.send(JSON.stringify(json));
+        document.getElementById("message").value = "";
+    }
+
+    // チャットメッセージ作成
+
+    function createChatMessage(json) {
+        // チャット全体
+        const chatDiv = document.createElement("div");
+
+        // 日付とニックネーム
+        const subDiv = document.createElement("div");
+        subDiv.className = "mt-1 text-secondary fs-80";
+
+        // 日時
+        const datetimeDiv = document.createElement("div");
+        datetimeDiv.textContent = json.datetime;
+
+        // ニックネーム
+        const nicknameDiv = document.createElement("div");
+
+        // メッセージ
+        const messageDiv = document.createElement("div");
+        messageDiv.className = "mt-1 rounded p-1 fit-content";
+        messageDiv.textContent = json.message;
+
+        // 自分のメッセージか
+        if (json.isMine) {
+            nicknameDiv.textContent = "自分";
+            messageDiv.classList.add("bg-lightgreen");
+            messageDiv.classList.add("d-inline-block");
+            chatDiv.classList.add("text-end");
+        } else {
+            nicknameDiv.textContent = json.nickname;
+            messageDiv.classList.add("bg-lightgray");
+        }
+        subDiv.appendChild(datetimeDiv);
+        subDiv.appendChild(nicknameDiv);
+        chatDiv.appendChild(subDiv);
+        chatDiv.appendChild(messageDiv);
+        return chatDiv;
+    }
+</script>
+
+</html>
