@@ -15,3 +15,6 @@ SocketIOを利用した、シンプルなチャットアプリ
 
 ### Frontend HTTPサーバーを起動
 - `docker exec -it websocket-chat_app_1 bash -c "ts-node ./frontend/index.ts"`
+
+## forever(プロセス監視)でサーバーを起動
+- `docker exec -it websocket-chat_app_1 bash -c "forever start -c ts-node ./frontend/index.ts && forever start -c ts-node ./backend/index.ts"`
