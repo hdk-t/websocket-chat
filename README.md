@@ -7,11 +7,11 @@ SocketIOを利用した、シンプルなチャットアプリ
 - `docker-compose up -d`
 
 ### ライブラリをインストール
-- `docker exec -it simple-chat_app_1 bash -c "cd ./backend && npm install"`
-- `docker exec -it simple-chat_app_1 bash -c "cd ./frontend && npm install"`
+- `docker exec -it websocket-chat_app_1 bash -c "cd ./backend && npm install"`
+- `docker exec -it websocket-chat_app_1 bash -c "cd ./frontend && npm install"`
 
-### WebSocketサーバーを起動
-- `docker exec -it simple-chat_app_1 bash -c "ts-node ./backend/index.ts"`
+### Backend WebSocketサーバーを起動
+- `docker exec -it websocket-chat_app_1 bash -c "ts-node ./backend/index.ts"`
 
-### HTTPサーバーを起動
-- `docker exec -it simple-chat_app_1 bash -c "ts-node ./frontend/index.ts"`
+### Frontend HTTPサーバーを起動
+- `docker exec -it websocket-chat_app_1 bash -c "ts-node ./frontend/index.ts"`

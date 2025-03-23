@@ -42,21 +42,18 @@
         .mw-470 {
             max-width: 470px;
         }
-        
-        .mw-450 {
-            max-width: 450px;
+
+        .mw-400 {
+            max-width: 400px;
         }
 
-        .mw-390 {
-            max-width: 390px;
-        }
     </style>
 </head>
 
-<body class="bg-light">
+<body>
     <div class="container-fluid">
         <div class="h-100 row justify-content-center">
-            <div class="mw-470">
+            <div class="mw-470 rounded bg-light">
                 <!-- ヘッダー -->
                 <div class="py-2 row d-flex align-items-center justify-content-start bg-primary">
                     <a href="/" class="ml-1 my-1 h5 text-light text-decoration-none">WebSocket Chat</a>
@@ -81,11 +78,11 @@
 
                 <!-- チャット画面 -->
                 <div id="chatView" class="d-none">
-                    <div id="chatSpace" class="my-1 overflow-auto" style="min-height:80vh;">
+                    <div id="chatSpace" class="my-1 overflow-auto" style="height:600px;">
                         <!-- ここにチャットメッセージが入る -->
                     </div>
-                    <!-- <div class="input-group m-1 fixed-bottom mw-470"> -->
-                    <div class="input-group m-1">
+                    <!-- <div class="input-group m-1 fixed-bottom mw-400"> -->
+                    <div class="input-group mt-2 mb-3">
                         <input id="message" type="text" class="form-control" placeholder="メッセージを入力" aria-describedby="sendButton" onkeydown="if(event.key === 'Enter') sendMessage()" />
                         <button class="btn btn-primary" type="button" id="sendButton" onclick="sendMessage()">
                             送信
@@ -104,7 +101,7 @@
     // チャットに参加
     function joinChat() {
         // WebSocket接続
-        ws = new WebSocket("ws://10.248.60.36:3000");
+        ws = new WebSocket("ws://localhost:3000");
 
         // メッセージ受信処理を設定
         ws.onmessage = (event) => {
