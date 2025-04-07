@@ -101,7 +101,7 @@
     // チャットに参加
     function joinChat() {
         // WebSocket接続
-        ws = new WebSocket("ws://localhost:3000");
+        ws = new WebSocket("ws://localhost:3001");
 
         // メッセージ受信処理を設定
         ws.onmessage = (event) => {

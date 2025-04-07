@@ -24,6 +24,6 @@ wss.on("connection", (ws: WebSocket) => {
 });
 
 // WebSocket用のHTTPサーバー起動
-server.listen(3000, () => {
-    console.log("WebSocket Chat backend is running on port 3000");
+server.listen(3001, () => {
+    console.log("WebSocket Chat backend is running");
 });

@@ -12,6 +12,6 @@ const server = http.createServer((request: IncomingMessage, response: ServerResp
 });
 
 // HTTPサーバー起動
-server.listen(8080, () => {
-    console.log("WebSocket Chat frontend is running on port 80");
+server.listen(3000, () => {
+    console.log("WebSocket Chat frontend is running");
 });
